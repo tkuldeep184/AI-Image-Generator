@@ -27,14 +27,22 @@ app.use(
   })
 );
 
-// Updated CORS configuration to handle preflight requests
+// Refined CORS configuration to explicitly allow headers and handle preflight requests
 app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', allowedOrigins.join(','));
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  const origin = req.headers.origin;
+
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  }
+
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
   }
+
   next();
 });
 
